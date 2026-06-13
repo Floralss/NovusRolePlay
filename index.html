@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BlackVault — Crypto Wallet</title>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236c47ff'/><text y='.9em' font-size='75' x='12'>🔐</text></svg>"/>
+</head>
+<body>
+
+<!-- PAGE LOADER -->
+<div class="page-loader" id="pageLoader">
+  <div class="logo-icon">🔐</div>
+  <div style="color:var(--text-secondary);font-size:14px">Загрузка BlackVault...</div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ==================== AUTH SECTION ==================== -->
+<div id="authSection" style="display:none">
+
+  <!-- LOGIN -->
+  <div id="loginPage" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">🔐</div>
+        <span class="logo-text">BlackVault</span>
+      </div>
+      <h1 class="auth-title">Добро пожаловать</h1>
+      <p class="auth-sub">Войдите в свой криптокошелёк</p>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="loginEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="loginPassword" placeholder="••••••••"/>
+      </div>
+      <button class="btn btn-primary" onclick="loginWithEmail()">
+        <span>Войти</span>
+      </button>
+
+      <div class="divider">или</div>
+      <button class="btn btn-google" onclick="loginWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"/>
+        Войти через Google
+      </button>
+
+      <div class="auth-footer">
+        Нет аккаунта? <a href="#" onclick="showPage('registerPage')">Зарегистрироваться</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="registerPage" class="auth-wrapper" style="display:none">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">🔐</div>
+        <span class="logo-text">BlackVault</span>
+      </div>
+      <h1 class="auth-title">Создать аккаунт</h1>
+      <p class="auth-sub">Присоединитесь к BlackVault</p>
+
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" class="form-input" id="regEmail" placeholder="you@example.com"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Пароль</label>
+        <input type="password" class="form-input" id="regPassword" placeholder="Минимум 6 символов"/>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Повторите пароль</label>
+        <input type="password" class="form-input" id="regPasswordConfirm" placeholder="••••••••"/>
+      </div>
+      <button class="btn btn-primary" onclick="registerWithEmail()">Создать аккаунт</button>
+
+      <div class="divider">или</div>
+      <button class="btn btn-google" onclick="loginWithGoogle()">
+        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"/>
+        Войти через Google
+      </button>
+
+      <div class="auth-footer">
+        Уже есть аккаунт? <a href="#" onclick="showPage('loginPage')">Войти</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHOOSE USERNAME -->
+  <div id="usernamePage" class="auth-wrapper" style="display:none">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-icon">🔐</div>
+        <span class="logo-text">BlackVault</span>
+      </div>
+      <h1 class="auth-title">Выберите никнейм</h1>
+      <p class="auth-sub">Он будет виден другим пользователям</p>
+
+      <div class="form-group">
+        <label class="form-label">Никнейм</label>
+        <input type="text" class="form-input" id="usernameInput" placeholder="например: CryptoKing" maxlength="24"/>
+      </div>
+      <button class="btn btn-primary" onclick="saveUsername()">Продолжить →</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- ==================== APP SECTION ==================== -->
+<div id="appSection" style="display:none">
+
+  <!-- MOBILE MENU TOGGLE -->
+  <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">🔐</div>
+      <span>BlackVault</span>
+    </div>
+
+    <span class="nav-section-label">Кошелёк</span>
+    <a class="nav-item active" onclick="navigateTo('dashboardPage')">
+      <span class="nav-icon">🏠</span> Главная
+    </a>
+    <a class="nav-item" onclick="navigateTo('assetsPage')">
+      <span class="nav-icon">💎</span> Активы
+    </a>
+    <a class="nav-item" onclick="navigateTo('transferPage')">
+      <span class="nav-icon">🔄</span> Перевод
+    </a>
+    <a class="nav-item" onclick="navigateTo('checksPage')">
+      <span class="nav-icon">🧾</span> Чеки
+    </a>
+    <a class="nav-item" onclick="navigateTo('historyPage')">
+      <span class="nav-icon">📋</span> История
+    </a>
+
+    <span class="nav-section-label">Сообщество</span>
+    <a class="nav-item" onclick="navigateTo('leaderboardPage')">
+      <span class="nav-icon">🏆</span> Рейтинг Forbes
+    </a>
+
+    <span class="nav-section-label" id="adminNavLabel" style="display:none">Администратор</span>
+    <a class="nav-item" id="adminNavItem" style="display:none" onclick="navigateTo('adminPage')">
+      <span class="nav-icon">👑</span> Панель владельца
+    </a>
+
+    <div class="sidebar-footer">
+      <a class="nav-item" onclick="navigateTo('settingsPage')">
+        <span class="nav-icon">⚙️</span> Настройки
+      </a>
+      <div class="sidebar-user" onclick="navigateTo('settingsPage')">
+        <div class="user-avatar" id="sidebarAvatar"><span id="sidebarAvatarText">?</span></div>
+        <div class="user-info">
+          <div class="user-name" id="sidebarUsername">—</div>
+          <div class="user-id" id="sidebarCode">BV-??????</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page active" id="dashboardPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title" id="dashGreeting">Добро пожаловать 👋</div>
+          <div class="page-sub" id="dashDate"></div>
+        </div>
+        <div id="ownerBadge" style="display:none"><span class="admin-badge">👑 Владелец</span></div>
+      </div>
+
+      <!-- Balance Card -->
+      <div class="balance-card" style="margin-bottom:24px">
+        <div class="balance-label">Общий баланс</div>
+        <div class="balance-amount">$<span id="totalBalance">0.00</span></div>
+        <div class="balance-change" id="walletCode">Код: BV-??????</div>
+
+        <div class="action-grid" style="margin-top:24px">
+          <button class="action-btn disabled" onclick="showComingSoon('Пополнение')">
+            <div class="action-icon">📥</div>
+            Пополнить
+          </button>
+          <button class="action-btn" onclick="navigateTo('transferPage')">
+            <div class="action-icon">🔄</div>
+            Перевод
+          </button>
+          <button class="action-btn disabled" onclick="showComingSoon('Вывод')">
+            <div class="action-icon">📤</div>
+            Вывести
+          </button>
+          <button class="action-btn" onclick="navigateTo('checksPage')">
+            <div class="action-icon">🧾</div>
+            Чек
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-grid" style="margin-bottom:24px">
+        <div class="stat-card">
+          <div class="stat-label">USD</div>
+          <div class="stat-value" id="dashUSD">$0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">TON</div>
+          <div class="stat-value" id="dashTON">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">BTC</div>
+          <div class="stat-value" id="dashBTC">0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">ETH</div>
+          <div class="stat-value" id="dashETH">0</div>
+        </div>
+      </div>
+
+      <!-- Blocked notice -->
+      <div class="blocked-notice" id="blockedNotice" style="display:none;margin-bottom:24px">
+        🔒 Ваш кошелёк заблокирован администратором. Обратитесь в поддержку.
+      </div>
+
+      <!-- Recent transactions -->
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+          <div style="font-family:var(--font-display);font-weight:700;font-size:16px">Последние операции</div>
+          <a onclick="navigateTo('historyPage')" style="font-size:13px;color:var(--accent);cursor:pointer">Все →</a>
+        </div>
+        <div class="tx-list" id="recentTxList">
+          <div style="color:var(--text-muted);text-align:center;padding:24px;font-size:14px">Операций ещё нет</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ASSETS ── -->
+    <div class="page" id="assetsPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">💎 Мои активы</div>
+          <div class="page-sub">Ваш крипто-портфель</div>
+        </div>
+      </div>
+      <div class="coins-grid" id="coinsGrid"></div>
+    </div>
+
+    <!-- ── TRANSFER ── -->
+    <div class="page" id="transferPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🔄 Перевод</div>
+          <div class="page-sub">Отправьте средства другому пользователю</div>
+        </div>
+      </div>
+      <div class="card transfer-card">
+        <div class="form-group">
+          <label class="form-label">Код получателя (BV-XXXXXX)</label>
+          <input class="form-input" id="transferTo" placeholder="BV-ABC123" style="text-transform:uppercase"/>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Валюта</label>
+          <select class="form-input" id="transferCurrency">
+            <option value="USD">💵 USD — Доллар</option>
+            <option value="TON">💎 TON — Toncoin</option>
+            <option value="BTC">₿ BTC — Bitcoin</option>
+            <option value="ETH">⟠ ETH — Ethereum</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Сумма</label>
+          <div class="amount-input-wrap">
+            <input class="form-input" id="transferAmount" type="number" placeholder="0.00" style="padding-right:70px"/>
+            <span class="currency-badge" id="transferCurrencyBadge">USD</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Комментарий (необязательно)</label>
+          <input class="form-input" id="transferComment" placeholder="За кофе ☕"/>
+        </div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;font-size:13px;color:var(--text-secondary)">
+          ℹ️ Перевод выполняется мгновенно. Комиссия: 0%
+        </div>
+        <button class="btn btn-primary" onclick="executeTransfer()">Отправить перевод</button>
+      </div>
+    </div>
+
+    <!-- ── CHECKS ── -->
+    <div class="page" id="checksPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🧾 Чеки</div>
+          <div class="page-sub">Создавайте и принимайте платежи</div>
+        </div>
+        <button class="btn btn-primary btn-sm" onclick="openModal('createCheckModal')">+ Создать чек</button>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('myChecks', this)">Мои чеки</button>
+        <button class="tab-btn" onclick="switchTab('incomingChecks', this)">Входящие</button>
+      </div>
+
+      <div id="myChecks">
+        <div id="myChecksList">
+          <div style="color:var(--text-muted);text-align:center;padding:40px;font-size:14px">Вы ещё не создавали чеки</div>
+        </div>
+      </div>
+      <div id="incomingChecks" style="display:none">
+        <div class="form-group" style="margin-bottom:16px">
+          <label class="form-label">Оплатить чек по ID</label>
+          <div style="display:flex;gap:10px">
+            <input class="form-input" id="payCheckInput" placeholder="Введите ID чека"/>
+            <button class="btn btn-primary btn-sm" onclick="payCheck()" style="width:auto;white-space:nowrap">Оплатить</button>
+          </div>
+        </div>
+        <div id="incomingChecksList">
+          <div style="color:var(--text-muted);text-align:center;padding:40px;font-size:14px">Нет входящих чеков</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── HISTORY ── -->
+    <div class="page" id="historyPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">📋 История операций</div>
+          <div class="page-sub">Все ваши транзакции</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="tx-list" id="historyList">
+          <div style="color:var(--text-muted);text-align:center;padding:40px;font-size:14px">Нет операций</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LEADERBOARD ── -->
+    <div class="page" id="leaderboardPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">🏆 Рейтинг Forbes</div>
+          <div class="page-sub">Богатейшие пользователи BlackVault</div>
+        </div>
+      </div>
+      <div class="card">
+        <div id="leaderboardList">
+          <div style="color:var(--text-muted);text-align:center;padding:40px;font-size:14px">Загрузка рейтинга...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADMIN ── -->
+    <div class="page" id="adminPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">👑 Панель владельца</div>
+          <div class="page-sub">Полный контроль над системой</div>
+        </div>
+        <span class="admin-badge">OWNER</span>
+      </div>
+
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('adminWallets', this)">Кошельки</button>
+        <button class="tab-btn" onclick="switchTab('adminDeposits', this)">Пополнения</button>
+        <button class="tab-btn" onclick="switchTab('adminWithdrawals', this)">Выводы</button>
+        <button class="tab-btn" onclick="switchTab('adminGive', this)">Выдать деньги</button>
+      </div>
+
+      <!-- Give money -->
+      <div id="adminGive" style="display:none">
+        <div class="card" style="max-width:480px">
+          <div style="font-family:var(--font-display);font-weight:700;margin-bottom:20px;font-size:16px">💰 Выдать деньги себе</div>
+          <div class="form-group">
+            <label class="form-label">Валюта</label>
+            <select class="form-input" id="adminCurrency">
+              <option value="USD">USD</option>
+              <option value="TON">TON</option>
+              <option value="BTC">BTC</option>
+              <option value="ETH">ETH</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Сумма</label>
+            <input class="form-input" id="adminAmount" type="number" placeholder="0.00"/>
+          </div>
+          <button class="btn btn-primary" onclick="adminGiveMoney()">Начислить</button>
+        </div>
+      </div>
+
+      <!-- Wallets list -->
+      <div id="adminWallets">
+        <div class="card" style="overflow-x:auto">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Пользователь</th>
+                <th>Код</th>
+                <th>Баланс USD</th>
+                <th>Статус</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="adminWalletsBody">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px">Загрузка...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Deposits -->
+      <div id="adminDeposits" style="display:none">
+        <div class="card" style="overflow-x:auto">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Пользователь</th><th>Сумма</th><th>Валюта</th><th>Дата</th></tr>
+            </thead>
+            <tbody id="adminDepositsBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">Нет данных</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Withdrawals -->
+      <div id="adminWithdrawals" style="display:none">
+        <div class="card" style="overflow-x:auto">
+          <table class="admin-table">
+            <thead>
+              <tr><th>Пользователь</th><th>Сумма</th><th>Валюта</th><th>Дата</th></tr>
+            </thead>
+            <tbody id="adminWithdrawalsBody">
+              <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">Нет данных</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="page" id="settingsPage">
+      <div class="page-header">
+        <div>
+          <div class="page-title">⚙️ Настройки</div>
+          <div class="page-sub">Управление аккаунтом и интерфейсом</div>
+        </div>
+      </div>
+
+      <!-- Profile -->
+      <div class="settings-section">
+        <div class="settings-section-title">👤 Профиль</div>
+        <div style="display:flex;align-items:center;gap:20px;margin-bottom:20px">
+          <div class="user-avatar" style="width:72px;height:72px;font-size:28px" id="settingsAvatar">
+            <span id="settingsAvatarText">?</span>
+          </div>
+          <div>
+            <div style="font-size:18px;font-weight:700" id="settingsUsername">—</div>
+            <div style="font-size:13px;color:var(--text-muted);font-family:monospace;margin-top:4px" id="settingsCode">BV-??????</div>
+            <div style="font-size:13px;color:var(--text-secondary);margin-top:2px" id="settingsEmail">—</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Изменить никнейм</label>
+          <div style="display:flex;gap:10px">
+            <input class="form-input" id="newUsername" placeholder="Новый никнейм"/>
+            <button class="btn btn-secondary btn-sm" onclick="changeUsername()" style="width:auto;white-space:nowrap">Сохранить</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avatar -->
+      <div class="settings-section">
+        <div class="settings-section-title">🖼 Аватар</div>
+        <div style="margin-bottom:12px">
+          <label class="btn btn-secondary btn-sm" style="width:auto;display:inline-flex;cursor:pointer">
+            📁 Загрузить фото
+            <input type="file" id="avatarInput" accept="image/*" style="display:none" onchange="uploadAvatar(this)"/>
+          </label>
+        </div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">История аватаров:</div>
+        <div class="avatar-grid" id="avatarHistory">
+          <div style="color:var(--text-muted);font-size:13px">Нет сохранённых аватаров</div>
+        </div>
+      </div>
+
+      <!-- Interface -->
+      <div class="settings-section">
+        <div class="settings-section-title">🎨 Интерфейс</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">Выберите цвет фона:</div>
+        <div class="color-grid" id="colorGrid"></div>
+        <div style="margin-top:20px">
+          <div style="font-size:13px;color:var(--text-secondary);margin-bottom:10px">Или загрузите фон:</div>
+          <label class="btn btn-secondary btn-sm" style="width:auto;display:inline-flex;cursor:pointer">
+            🖼 Выбрать изображение
+            <input type="file" id="bgInput" accept="image/*" style="display:none" onchange="uploadBackground(this)"/>
+          </label>
+          <button class="btn btn-danger btn-sm" style="margin-left:10px" onclick="resetBackground()">Сбросить фон</button>
+        </div>
+      </div>
+
+      <!-- Owner Code -->
+      <div class="settings-section">
+        <div class="settings-section-title">🔑 Код владельца</div>
+        <div style="font-size:13px;color:var(--text-secondary);margin-bottom:12px">
+          Введите секретный код для активации статуса владельца проекта.
+        </div>
+        <div class="form-group">
+          <div style="display:flex;gap:10px">
+            <input type="password" class="form-input" id="ownerCodeInput" placeholder="Введите секретный код"/>
+            <button class="btn btn-secondary btn-sm" onclick="activateOwnerCode()" style="width:auto;white-space:nowrap">Активировать</button>
+          </div>
+        </div>
+        <div id="ownerStatus" style="font-size:13px;margin-top:8px"></div>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="settings-section" style="border-color:rgba(255,77,109,0.2)">
+        <div class="settings-section-title" style="color:var(--danger)">⚠️ Опасная зона</div>
+        <button class="btn btn-danger" onclick="logout()">🚪 Выйти из аккаунта</button>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Create Check Modal -->
+<div class="modal-overlay" id="createCheckModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🧾 Создать чек</div>
+      <button class="modal-close" onclick="closeModal('createCheckModal')">✕</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Валюта</label>
+      <select class="form-input" id="checkCurrency">
+        <option value="USD">💵 USD</option>
+        <option value="TON">💎 TON</option>
+        <option value="BTC">₿ BTC</option>
+        <option value="ETH">⟠ ETH</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Сумма</label>
+      <input class="form-input" id="checkAmount" type="number" placeholder="0.00"/>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Описание (необязательно)</label>
+      <input class="form-input" id="checkDescription" placeholder="За что этот чек..."/>
+    </div>
+    <button class="btn btn-primary" onclick="createCheck()">Создать чек</button>
+  </div>
+</div>
+
+<!-- Check View Modal -->
+<div class="modal-overlay" id="viewCheckModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">🧾 Чек</div>
+      <button class="modal-close" onclick="closeModal('viewCheckModal')">✕</button>
+    </div>
+    <div id="viewCheckContent"></div>
+  </div>
+</div>
+
+<!-- Admin block modal -->
+<div class="modal-overlay" id="adminActionModal">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="adminActionTitle">Действие</div>
+      <button class="modal-close" onclick="closeModal('adminActionModal')">✕</button>
+    </div>
+    <div id="adminActionContent"></div>
+  </div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
